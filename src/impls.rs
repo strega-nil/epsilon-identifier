@@ -1,5 +1,7 @@
 use std::{borrow, cmp, fmt, ops, hash};
 
+use atomizer::AtomProxy;
+
 use unicode_normalization::UnicodeNormalization;
 
 use super::*;
@@ -64,6 +66,17 @@ impl<'a> From<&'a NfcString> for NfcStringBuf {
 impl<'a> From<&'a str> for NfcStringBuf {
   fn from(s: &'a str) -> Self {
     Self::new(s)
+  }
+}
+
+impl AtomProxy<NfcStringBuf> for str {
+  type Compare = NfcCmpString;
+
+  fn to_owned(&self) -> NfcStringBuf {
+    NfcStringBuf::new(self)
+  }
+  fn to_compare(&self) -> &Self::Compare {
+    NfcCmpString::from_str(self)
   }
 }
 

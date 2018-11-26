@@ -3,7 +3,7 @@ use unicode_normalization::UnicodeNormalization;
 
 use atomizer::stable_set::StableSet;
 
-pub type NfcStringSet = StableSet<NfcStringBuf, NfcCmpString>;
+pub type NfcStringSet = StableSet<NfcStringBuf>;
 
 mod impls;
 
