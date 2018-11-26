@@ -1,9 +1,11 @@
 [package]
-name = "eps-strings"
-version = "0.1.0"
+name = "epsilon-identifier"
+version = "0.0.1"
 authors = ["Nicole Mazzuca <npmazzuca@gmail.com>"]
 edition = "2018"
 description = "Squatting on a name for a symbol intern library"
 license = "Apache-2.0"
 
 [dependencies]
+atomizer = {git = "https://github.com/ubsan/atomizer"}
+unicode-normalization = "0.1.7"
