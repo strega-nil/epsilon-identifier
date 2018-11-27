@@ -242,14 +242,33 @@ impl cmp::PartialOrd<NfcStringBuf> for NfcCmpString {
 
 // HASH IMPLS
 
+// We implement hashing this way so that it's guaranteed stable for us,
+// and so that we can NFC-encode str as we write.
+// We write a 0xFF at the end because it doesn't appear in utf-8, so that
+// hash(("abc", "def")) ≠ hash(("abcdef", ""))
+
 impl hash::Hash for NfcString {
   fn hash<H: hash::Hasher>(&self, h: &mut H) {
-    self.as_str().hash(h)
+    let mut buff = [0u8; 4];
+    for ch in self.as_str().chars() {
+      h.write(ch.encode_utf8(&mut buff).as_bytes());
+    }
+    h.write_u8(0xFF);
   }
 }
 
 impl hash::Hash for NfcStringBuf {
   fn hash<H: hash::Hasher>(&self, h: &mut H) {
     (**self).hash(h)
+  }
+}
+
+impl hash::Hash for NfcCmpString {
+  fn hash<H: hash::Hasher>(&self, h: &mut H) {
+    let mut buff = [0u8; 4];
+    for ch in self.0.nfc() {
+      h.write(ch.encode_utf8(&mut buff).as_bytes());
+    }
+    h.write_u8(0xFF);
   }
 }

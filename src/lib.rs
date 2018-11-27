@@ -41,13 +41,13 @@ impl NfcString {
     &mut self.array as *mut [u8; 0] as *mut u8
   }
 
-  pub fn as_utf8(&self) -> &[u8] {
+  pub fn as_bytes(&self) -> &[u8] {
     unsafe {
       std::slice::from_raw_parts(self.ptr(), self.len())
     }
   }
 
-  pub fn as_utf8_with_nul(&self) -> &[u8] {
+  pub fn as_bytes_with_nul(&self) -> &[u8] {
     unsafe {
       std::slice::from_raw_parts(self.ptr(), self.len() + 1)
     }
@@ -55,13 +55,13 @@ impl NfcString {
 
   pub fn as_str(&self) -> &str {
     unsafe {
-      std::str::from_utf8_unchecked(self.as_utf8())
+      std::str::from_utf8_unchecked(self.as_bytes())
     }
   }
 
   pub fn as_cstr(&self) -> &ffi::CStr {
     unsafe {
-      ffi::CStr::from_bytes_with_nul_unchecked(self.as_utf8_with_nul())
+      ffi::CStr::from_bytes_with_nul_unchecked(self.as_bytes_with_nul())
     }
   }
 
@@ -124,7 +124,7 @@ impl NfcStringBuf {
 
       std::ptr::write(&mut (*ptr).size, s.len() as u32);
       let buff = std::slice::from_raw_parts_mut((*ptr).mut_ptr(), size);
-      buff.copy_from_slice(s.as_utf8_with_nul());
+      buff.copy_from_slice(s.as_bytes_with_nul());
 
       NfcStringBuf {
         ptr: std::ptr::NonNull::new_unchecked(ptr),
