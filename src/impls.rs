@@ -1,4 +1,4 @@
-use std::{borrow, cmp, fmt, ops, hash};
+use std::{borrow, cmp, convert, fmt, ops, hash};
 
 use atomizer::AtomProxy;
 
@@ -19,9 +19,12 @@ impl fmt::Display for NfcString {
 }
 
 // CONVERSION TRAIT IMPLS
-impl borrow::Borrow<NfcCmpString> for NfcString {
-  fn borrow(&self) -> &NfcCmpString {
-    NfcCmpString::from_str(self.as_str())
+
+impl ops::Deref for NfcString {
+  type Target = str;
+
+  fn deref(&self) -> &str {
+    self.as_str()
   }
 }
 
@@ -33,9 +36,14 @@ impl ops::Deref for NfcStringBuf {
   }
 }
 
+impl borrow::Borrow<NfcCmpString> for NfcString {
+  fn borrow(&self) -> &NfcCmpString {
+    NfcCmpString::from_str(self.as_str())
+  }
+}
 impl borrow::Borrow<NfcString> for NfcStringBuf {
   fn borrow(&self) -> &NfcString {
-    &**self
+    self
   }
 }
 impl borrow::Borrow<NfcCmpString> for NfcStringBuf {
@@ -44,8 +52,23 @@ impl borrow::Borrow<NfcCmpString> for NfcStringBuf {
   }
 }
 
-impl borrow::Borrow<NfcCmpString> for str {
-  fn borrow(&self) -> &NfcCmpString {
+impl convert::AsRef<NfcCmpString> for NfcString {
+  fn as_ref(&self) -> &NfcCmpString {
+    NfcCmpString::from_str(self.as_str())
+  }
+}
+impl convert::AsRef<NfcString> for NfcStringBuf {
+  fn as_ref(&self) -> &NfcString {
+    self
+  }
+}
+impl convert::AsRef<NfcCmpString> for NfcStringBuf {
+  fn as_ref(&self) -> &NfcCmpString {
+    NfcCmpString::from_str(self.as_str())
+  }
+}
+impl convert::AsRef<NfcCmpString> for str {
+  fn as_ref(&self) -> &NfcCmpString {
     NfcCmpString::from_str(self)
   }
 }
